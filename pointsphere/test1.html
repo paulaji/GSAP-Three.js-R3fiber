@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Space</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"
+      integrity="sha512-16esztaSRplJROstbIIdwX3N97V1+pZvV33ABoG1H2OyTttBxEGkTsoIVsiP1iaTtM8b3+hu2kB6pQ4Clr5yug=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r108/three.min.js"
+      integrity="sha512-i9csND3vwIshk0GX8W0filD+rEYmeO84ULrqGJj7BmqSKyE3tBmwwJ+jJwznk3TIbQb63pumRqzSLoOQwpENLA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Space+Mono&display=swap");
+    </style>
+  </head>
+  <body>
+    <script>
+      // Create the button
+      var button_bigbang = document.createElement("button");
+      button_bigbang.innerText = `-> "Big Bang"`;
+      button_bigbang.classList.add("continue-button1");
+      document.body.appendChild(button_bigbang);
+
+      // Position the button in the center of the screen
+      button_bigbang.style.left = "50%";
+      button_bigbang.style.top = "50%";
+      button_bigbang.style.transform = "translate(-50%, -50%)";
+
+      // Add click event listener to the button
+      button_bigbang.addEventListener("click", function () {
+        // Create the Celestial body when button is clicked
+        var scene = new THREE.Scene();
+        document.addEventListener("mousemove", onMouseMove, false);
+        var camera = new THREE.PerspectiveCamera(
+          75,
+          window.innerWidth / window.innerHeight,
+          0.1,
+          1000
+        );
+        var mouseX;
+        var mouseY;
+        var renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        window.addEventListener("resize", () => {
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, innerHeight);
+        });
+
+        var distance = Math.min(200, window.innerWidth / 4);
+        var geometry = new THREE.Geometry();
+
+        for (var i = 0; i < 2000; i++) {
+          var vertex = new THREE.Vector3();
+
+          var theta = THREE.Math.randFloatSpread(360);
+          var phi = THREE.Math.randFloatSpread(360);
+
+          vertex.x = distance * Math.sin(theta) * Math.cos(phi);
+          vertex.y = distance * Math.sin(theta) * Math.sin(phi);
+          vertex.z = distance * Math.cos(theta);
+
+          geometry.vertices.push(vertex);
+
+          // Assign random colors to the particles
+          var color = new THREE.Color();
+          color.setHSL(Math.random(), 1, 1);
+          geometry.colors.push(color);
+        }
+
+        var particles = new THREE.Points(
+          geometry,
+          new THREE.PointsMaterial({
+            size: 2,
+            vertexColors: THREE.VertexColors,
+          })
+        );
+
+        particles.boundingSphere = 50;
+
+        var renderingParent = new THREE.Group();
+        renderingParent.add(particles);
+
+        var resizeContainer = new THREE.Group();
+        resizeContainer.add(renderingParent);
+        scene.add(resizeContainer);
+
+        camera.position.z = 400;
+
+        var animate = () => {
+          requestAnimationFrame(animate);
+          renderer.render(scene, camera);
+        };
+
+        var myTween;
+        function onMouseMove(event) {
+          if (myTween) myTween.kill();
+
+          mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+          mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+          myTween = gsap.to(particles.rotation, {
+            duration: 0.1,
+            x: mouseY * -1,
+            y: mouseX,
+          });
+        }
+        animate();
+
+        var animProps = { scale: 2, xRot: 0, yRot: 0 };
+        renderingParent.scale.set(
+          animProps.scale,
+          animProps.scale,
+          animProps.scale
+        );
+
+        gsap.to(animProps, {
+          duration: 120,
+          xRot: Math.PI * 2,
+          yRot: Math.PI * 4,
+          repeat: -1,
+          yoyo: false,
+          ease: "none",
+          onUpdate: function () {
+            renderingParent.rotation.set(animProps.xRot, animProps.yRot, 0);
+          },
+        });
+      });
+    </script>
+  </body>
+</html>
