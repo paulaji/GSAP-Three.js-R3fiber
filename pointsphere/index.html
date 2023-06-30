@@ -52,10 +52,10 @@
         vertex.y = distance * Math.sin(theta) * Math.cos(phi);
         vertex.z = distance * Math.cos(theta);
 
-        geometry.verticespush(vertex);
+        geometry.vertices.push(vertex);
       }
 
-      var patricles = new THREE.Points(
+      var particles = new THREE.Points(
         geometry,
         new THREE.PointsMaterial({
           color: 0xff44ff,
@@ -67,6 +67,20 @@
 
       var renderingParent = new THREE.Group();
       renderingParent.add(particles);
+
+      var resizeContainer = new THREE.Group();
+      resizeContainer.add(renderingParent);
+      scene.add(resizeContainer);
+
+      camera.position.z = 400;
+
+      var animate = () => {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      };
+
+      scene.add(particles);
+      animate();
     </script>
   </body>
 </html>
