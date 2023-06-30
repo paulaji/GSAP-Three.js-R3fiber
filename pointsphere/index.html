@@ -54,6 +54,19 @@
 
         geometry.verticespush(vertex);
       }
+
+      var patricles = new THREE.Points(
+        geometry,
+        new THREE.PointsMaterial({
+          color: 0xff44ff,
+          size: 2,
+        })
+      );
+
+      particles.boundingSphere = 50;
+
+      var renderingParent = new THREE.Group();
+      renderingParent.add(particles);
     </script>
   </body>
 </html>
