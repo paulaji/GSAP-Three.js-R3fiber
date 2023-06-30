@@ -42,12 +42,7 @@
       var distance = Math.min(200, window.innerWidth / 4);
       var geometry = new THREE.Geometry();
 
-      var textureLoader = new THREE.TextureLoader();
-      var earthTexture = textureLoader.load(
-        "https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg"
-      );
-
-      for (var i = 0; i < 1600; i++) {
+      for (var i = 0; i < 2000; i++) {
         var vertex = new THREE.Vector3();
 
         var theta = THREE.Math.randFloatSpread(360);
@@ -59,26 +54,9 @@
 
         geometry.vertices.push(vertex);
 
-        // Assign colors based on vertex positions
-        var lat = Math.acos(vertex.z / distance);
-        var lon = Math.atan2(vertex.y, vertex.x);
-
+        // Assign random colors to the particles
         var color = new THREE.Color();
-
-        // Land color
-        if (lat > 0 && lat < Math.PI / 2) {
-          color.setStyle("green");
-        }
-        // Ocean color
-        else {
-          color.setStyle("blue");
-        }
-
-        // Highlight for sky
-        if (lat > Math.PI / 2 - 0.2) {
-          color.setStyle("white");
-        }
-
+        color.setHSL(Math.random(), 1, 0.5);
         geometry.colors.push(color);
       }
 
@@ -87,8 +65,6 @@
         new THREE.PointsMaterial({
           size: 2,
           vertexColors: THREE.VertexColors,
-          map: earthTexture,
-          transparent: true,
         })
       );
 
@@ -122,21 +98,12 @@
       }
       animate();
 
-      var animProps = { scale: 1, xRot: 0, yRot: 0 };
-      gsap.to(animProps, {
-        duration: 10,
-        scale: 1,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine",
-        onUpdate: function () {
-          renderingParent.scale.set(
-            animProps.scale,
-            animProps.scale,
-            animProps.scale
-          );
-        },
-      });
+      var animProps = { scale: 2, xRot: 0, yRot: 0 };
+      renderingParent.scale.set(
+        animProps.scale,
+        animProps.scale,
+        animProps.scale
+      );
 
       gsap.to(animProps, {
         duration: 120,

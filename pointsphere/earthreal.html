@@ -21,7 +21,7 @@
   <body>
     <script>
       var scene = new THREE.Scene();
-      document.addEventListener("mousemove", onMouseMove, false);
+      //   document.addEventListener("mousemove", onMouseMove, false);
       var camera = new THREE.PerspectiveCamera(
         75,
         window.innerWidth / window.innerHeight,
@@ -40,66 +40,14 @@
       });
 
       var distance = Math.min(200, window.innerWidth / 4);
-      var geometry = new THREE.Geometry();
-
+      var geometry = new THREE.SphereGeometry(distance, 32, 32);
       var textureLoader = new THREE.TextureLoader();
       var earthTexture = textureLoader.load(
         "https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg"
       );
-
-      for (var i = 0; i < 1600; i++) {
-        var vertex = new THREE.Vector3();
-
-        var theta = THREE.Math.randFloatSpread(360);
-        var phi = THREE.Math.randFloatSpread(360);
-
-        vertex.x = distance * Math.sin(theta) * Math.cos(phi);
-        vertex.y = distance * Math.sin(theta) * Math.sin(phi);
-        vertex.z = distance * Math.cos(theta);
-
-        geometry.vertices.push(vertex);
-
-        // Assign colors based on vertex positions
-        var lat = Math.acos(vertex.z / distance);
-        var lon = Math.atan2(vertex.y, vertex.x);
-
-        var color = new THREE.Color();
-
-        // Land color
-        if (lat > 0 && lat < Math.PI / 2) {
-          color.setStyle("green");
-        }
-        // Ocean color
-        else {
-          color.setStyle("blue");
-        }
-
-        // Highlight for sky
-        if (lat > Math.PI / 2 - 0.2) {
-          color.setStyle("white");
-        }
-
-        geometry.colors.push(color);
-      }
-
-      var particles = new THREE.Points(
-        geometry,
-        new THREE.PointsMaterial({
-          size: 2,
-          vertexColors: THREE.VertexColors,
-          map: earthTexture,
-          transparent: true,
-        })
-      );
-
-      particles.boundingSphere = 50;
-
-      var renderingParent = new THREE.Group();
-      renderingParent.add(particles);
-
-      var resizeContainer = new THREE.Group();
-      resizeContainer.add(renderingParent);
-      scene.add(resizeContainer);
+      var material = new THREE.MeshBasicMaterial({ map: earthTexture });
+      var earthSphere = new THREE.Mesh(geometry, material);
+      scene.add(earthSphere);
 
       camera.position.z = 400;
 
@@ -114,7 +62,7 @@
 
         mouseX = (event.clientX / window.innerWidth) * 2 - 1;
         mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-        myTween = gsap.to(particles.rotation, {
+        myTween = gsap.to(earthSphere.rotation, {
           duration: 0.1,
           x: mouseY * -1,
           y: mouseX,
@@ -130,7 +78,7 @@
         yoyo: true,
         ease: "sine",
         onUpdate: function () {
-          renderingParent.scale.set(
+          earthSphere.scale.set(
             animProps.scale,
             animProps.scale,
             animProps.scale
@@ -146,7 +94,7 @@
         yoyo: false,
         ease: "none",
         onUpdate: function () {
-          renderingParent.rotation.set(animProps.xRot, animProps.yRot, 0);
+          earthSphere.rotation.set(animProps.xRot, animProps.yRot, 0);
         },
       });
     </script>

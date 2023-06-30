@@ -1,0 +1,4 @@
+inorder to give movement to the sphere, change the scale
+if scale: 1, it wont move
+if scale < 1, it will appear like going inward to the screen
+if scale > 1, it will appear like coming towards you
