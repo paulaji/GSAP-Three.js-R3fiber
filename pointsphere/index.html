@@ -23,151 +23,282 @@
   </head>
   <body>
     <script>
-      var scene = new THREE.Scene();
-      document.addEventListener("mousemove", onMouseMove, false);
-      var camera = new THREE.PerspectiveCamera(
-        75,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-      );
-      var mouseX;
-      var mouseY;
-      var renderer = new THREE.WebGLRenderer();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      document.body.appendChild(renderer.domElement);
-      window.addEventListener("resize", () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, innerHeight);
-      });
+      // Update scale based on screen size using media queries
+      var mediaQuery = window.matchMedia("(max-width: 768px)");
 
-      var distance = Math.min(200, window.innerWidth / 4);
-      var geometry = new THREE.Geometry();
+      function handleMediaQuery(mediaQuery) {
+        if (mediaQuery.matches) {
+          var scene = new THREE.Scene();
+          document.addEventListener("mousemove", onMouseMove, false);
+          var camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          );
+          var mouseX;
+          var mouseY;
+          var renderer = new THREE.WebGLRenderer();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          document.body.appendChild(renderer.domElement);
+          window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, innerHeight);
+          });
 
-      for (var i = 0; i < 2000; i++) {
-        var vertex = new THREE.Vector3();
+          var distance = Math.min(200, window.innerWidth / 4);
+          var geometry = new THREE.Geometry();
 
-        var theta = THREE.Math.randFloatSpread(360);
-        var phi = THREE.Math.randFloatSpread(360);
+          for (var i = 0; i < 2000; i++) {
+            var vertex = new THREE.Vector3();
 
-        vertex.x = distance * Math.sin(theta) * Math.cos(phi);
-        vertex.y = distance * Math.sin(theta) * Math.sin(phi);
-        vertex.z = distance * Math.cos(theta);
+            var theta = THREE.Math.randFloatSpread(360);
+            var phi = THREE.Math.randFloatSpread(360);
 
-        geometry.vertices.push(vertex);
+            vertex.x = distance * Math.sin(theta) * Math.cos(phi);
+            vertex.y = distance * Math.sin(theta) * Math.sin(phi);
+            vertex.z = distance * Math.cos(theta);
 
-        // Assign random colors to the particles
-        var color = new THREE.Color();
-        color.setHSL(Math.random(), 1, 1);
-        geometry.colors.push(color);
-      }
+            geometry.vertices.push(vertex);
 
-      var particles = new THREE.Points(
-        geometry,
-        new THREE.PointsMaterial({
-          size: 2,
-          vertexColors: THREE.VertexColors,
-        })
-      );
+            // Assign random colors to the particles
+            var color = new THREE.Color();
+            color.setHSL(Math.random(), 1, 1);
+            geometry.colors.push(color);
+          }
 
-      particles.boundingSphere = 50;
+          var particles = new THREE.Points(
+            geometry,
+            new THREE.PointsMaterial({
+              size: 2,
+              vertexColors: THREE.VertexColors,
+            })
+          );
 
-      var renderingParent = new THREE.Group();
-      renderingParent.add(particles);
+          particles.boundingSphere = 50;
 
-      var resizeContainer = new THREE.Group();
-      resizeContainer.add(renderingParent);
-      scene.add(resizeContainer);
+          var renderingParent = new THREE.Group();
+          renderingParent.add(particles);
 
-      camera.position.z = 400;
+          var resizeContainer = new THREE.Group();
+          resizeContainer.add(renderingParent);
+          scene.add(resizeContainer);
 
-      var animate = () => {
-        requestAnimationFrame(animate);
-        renderer.render(scene, camera);
-      };
+          camera.position.z = 400;
 
-      var myTween;
-      function onMouseMove(event) {
-        if (myTween) myTween.kill();
+          var animate = () => {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+          };
 
-        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-        myTween = gsap.to(particles.rotation, {
-          duration: 0.1,
-          x: mouseY * -1,
-          y: mouseX,
-        });
-      }
-      animate();
+          var myTween;
+          function onMouseMove(event) {
+            if (myTween) myTween.kill();
 
-      var animProps = { scale: 2, xRot: 0, yRot: 0 };
-      renderingParent.scale.set(
-        animProps.scale,
-        animProps.scale,
-        animProps.scale
-      );
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            myTween = gsap.to(particles.rotation, {
+              duration: 0.1,
+              x: mouseY * -1,
+              y: mouseX,
+            });
+          }
+          animate();
 
-      gsap.to(animProps, {
-        duration: 120,
-        xRot: Math.PI * 2,
-        yRot: Math.PI * 4,
-        repeat: -1,
-        yoyo: false,
-        ease: "none",
-        onUpdate: function () {
-          renderingParent.rotation.set(animProps.xRot, animProps.yRot, 0);
-        },
-      });
+          var animProps = { scale: 4, xRot: 0, yRot: 0 };
+          renderingParent.scale.set(
+            animProps.scale,
+            animProps.scale,
+            animProps.scale
+          );
 
-      // Create the button
-      var button = document.createElement("button");
-      button.innerText = `explore ->`;
-      button.classList.add("continue-button");
-      document.body.appendChild(button);
+          gsap.to(animProps, {
+            duration: 120,
+            xRot: Math.PI * 2,
+            yRot: Math.PI * 4,
+            repeat: -1,
+            yoyo: false,
+            ease: "none",
+            onUpdate: function () {
+              renderingParent.rotation.set(animProps.xRot, animProps.yRot, 0);
+            },
+          });
 
-      // Position the button in the center of the screen
-      button.style.left = "50%";
-      button.style.top = "50%";
-      button.style.transform = "translate(-50%, -50%)";
+          // Create the button
+          var button = document.createElement("button");
+          button.innerText = `explore ->`;
+          button.classList.add("continue-button");
+          document.body.appendChild(button);
 
-      // Variable to keep track of button state
-      var isBigBang = false;
+          // Position the button in the center of the screen
+          button.style.left = "50%";
+          button.style.top = "50%";
+          button.style.transform = "translate(-50%, -50%)";
 
-      //   // Set the initial scale based on the initial button text
-      //   if (button.innerText === `-> "Big Bang"`) {
-      //     animProps.scale = 1;
-      //   } else {
-      //     animProps.scale = 2;
-      //   }
+          // Variable to keep track of button state
+          var isBigBang = false;
 
-      // Update the scale of the renderingParent
-      renderingParent.scale.set(
-        animProps.scale,
-        animProps.scale,
-        animProps.scale
-      );
+          // Add click event listener to the button
+          button.addEventListener("click", function () {
+            // Toggle the button's text between "Big Bang" and "-> Celestial Body"
+            if (isBigBang) {
+              button.innerText = `-> "Big Bang"`;
+              animProps.scale = 1; // Set scale to 1 for "Celestial Body"
+            } else {
+              button.innerText = `-> "Celestial Body"`;
+              animProps.scale = 4; // Set scale to 2 for "Big Bang"
+            }
+            // Toggle the state variable
+            isBigBang = !isBigBang;
 
-      // Add click event listener to the button
-      button.addEventListener("click", function () {
-        // Toggle the button's text between "Big Bang" and "-> Celestial Body"
-        if (isBigBang) {
-          button.innerText = `-> "Big Bang"`;
-          animProps.scale = 1; // Set scale to 1 for "Celestial Body"
+            // Update the scale of the renderingParent
+            renderingParent.scale.set(
+              animProps.scale,
+              animProps.scale,
+              animProps.scale
+            );
+          });
         } else {
-          button.innerText = `-> "Celestial Body"`;
-          animProps.scale = 2; // Set scale to 2 for "Big Bang"
-        }
-        // Toggle the state variable
-        isBigBang = !isBigBang;
+          var scene = new THREE.Scene();
+          document.addEventListener("mousemove", onMouseMove, false);
+          var camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+          );
+          var mouseX;
+          var mouseY;
+          var renderer = new THREE.WebGLRenderer();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+          document.body.appendChild(renderer.domElement);
+          window.addEventListener("resize", () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, innerHeight);
+          });
 
-        // Update the scale of the renderingParent
-        renderingParent.scale.set(
-          animProps.scale,
-          animProps.scale,
-          animProps.scale
-        );
-      });
+          var distance = Math.min(200, window.innerWidth / 4);
+          var geometry = new THREE.Geometry();
+
+          for (var i = 0; i < 2000; i++) {
+            var vertex = new THREE.Vector3();
+
+            var theta = THREE.Math.randFloatSpread(360);
+            var phi = THREE.Math.randFloatSpread(360);
+
+            vertex.x = distance * Math.sin(theta) * Math.cos(phi);
+            vertex.y = distance * Math.sin(theta) * Math.sin(phi);
+            vertex.z = distance * Math.cos(theta);
+
+            geometry.vertices.push(vertex);
+
+            // Assign random colors to the particles
+            var color = new THREE.Color();
+            color.setHSL(Math.random(), 1, 1);
+            geometry.colors.push(color);
+          }
+
+          var particles = new THREE.Points(
+            geometry,
+            new THREE.PointsMaterial({
+              size: 2,
+              vertexColors: THREE.VertexColors,
+            })
+          );
+
+          particles.boundingSphere = 50;
+
+          var renderingParent = new THREE.Group();
+          renderingParent.add(particles);
+
+          var resizeContainer = new THREE.Group();
+          resizeContainer.add(renderingParent);
+          scene.add(resizeContainer);
+
+          camera.position.z = 400;
+
+          var animate = () => {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+          };
+
+          var myTween;
+          function onMouseMove(event) {
+            if (myTween) myTween.kill();
+
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+            myTween = gsap.to(particles.rotation, {
+              duration: 0.1,
+              x: mouseY * -1,
+              y: mouseX,
+            });
+          }
+          animate();
+
+          var animProps = { scale: 2, xRot: 0, yRot: 0 };
+          renderingParent.scale.set(
+            animProps.scale,
+            animProps.scale,
+            animProps.scale
+          );
+
+          gsap.to(animProps, {
+            duration: 120,
+            xRot: Math.PI * 2,
+            yRot: Math.PI * 4,
+            repeat: -1,
+            yoyo: false,
+            ease: "none",
+            onUpdate: function () {
+              renderingParent.rotation.set(animProps.xRot, animProps.yRot, 0);
+            },
+          });
+
+          // Create the button
+          var button = document.createElement("button");
+          button.innerText = `explore ->`;
+          button.classList.add("continue-button");
+          document.body.appendChild(button);
+
+          // Position the button in the center of the screen
+          button.style.left = "50%";
+          button.style.top = "50%";
+          button.style.transform = "translate(-50%, -50%)";
+
+          // Variable to keep track of button state
+          var isBigBang = false;
+
+          // Add click event listener to the button
+          button.addEventListener("click", function () {
+            // Toggle the button's text between "Big Bang" and "-> Celestial Body"
+            if (isBigBang) {
+              button.innerText = `-> "Big Bang"`;
+              animProps.scale = 1; // Set scale to 1 for "Celestial Body"
+            } else {
+              button.innerText = `-> "Celestial Body"`;
+              animProps.scale = 2; // Set scale to 2 for "Big Bang"
+            }
+            // Toggle the state variable
+            isBigBang = !isBigBang;
+
+            // Update the scale of the renderingParent
+            renderingParent.scale.set(
+              animProps.scale,
+              animProps.scale,
+              animProps.scale
+            );
+          });
+        }
+      }
+
+      // Call the function to initialize based on the current media query state
+      handleMediaQuery(mediaQuery);
+
+      // Add event listener to handle changes in media query state
+      mediaQuery.addListener(handleMediaQuery);
     </script>
   </body>
 </html>
