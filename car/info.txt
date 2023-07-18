@@ -1,0 +1,2 @@
+npx create-react-app . --template minimal // create a minimal template react application, . refers to current directory
+npm install three @react-three/fiber @react-three/drei @react-three/postprocessing // installing threejs react libraries

@@ -1,0 +1,27 @@
+# Ignore node_modules directory
+node_modules/
+
+# Ignore build output
+/build
+/dist
+
+# Ignore log files
+*.log
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore editor-specific files
+.vscode/
+.idea/
+
+# Ignore environment files (optional, remove if needed)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Ignore cache and lock files (optional, remove if needed)
+yarn-error.log
+yarn.lock
+package-lock.json

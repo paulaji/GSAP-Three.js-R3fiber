@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multiple Rotating Spheres</title>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
+    <script>
+      var scene = new THREE.Scene();
+      document.addEventListener("mousemove", onMouseMove, false);
+      var camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      var mouseX;
+      var mouseY;
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // First Sphere
+      var distance1 = Math.min(200, window.innerWidth / 4);
+      var geometry1 = new THREE.Geometry();
+
+      for (var i = 0; i < 10000; i++) {
+        var vertex = new THREE.Vector3();
+
+        var theta = THREE.Math.randFloatSpread(360);
+        var phi = THREE.Math.randFloatSpread(360);
+
+        vertex.x = distance1 * Math.sin(theta) * Math.cos(phi);
+        vertex.y = distance1 * Math.sin(theta) * Math.sin(phi);
+        vertex.z = distance1 * Math.cos(theta);
+
+        geometry1.vertices.push(vertex);
+
+        // Assign random colors to the particles
+        var color = new THREE.Color();
+        color.setHSL(20, 1, 0.5);
+        geometry1.colors.push(color);
+      }
+
+      var particles1 = new THREE.Points(
+        geometry1,
+        new THREE.PointsMaterial({
+          size: 1,
+          vertexColors: THREE.VertexColors,
+        })
+      );
+
+      particles1.boundingSphere = 50;
+
+      var renderingParent1 = new THREE.Group();
+      renderingParent1.add(particles1);
+
+      var resizeContainer1 = new THREE.Group();
+      resizeContainer1.add(renderingParent1);
+      scene.add(resizeContainer1);
+
+      renderingParent1.position.x = -100; // Adjust the position of the first sphere
+
+      // Second Sphere
+      var distance2 = Math.min(150, window.innerWidth / 5);
+      var geometry2 = new THREE.Geometry();
+
+      for (var i = 0; i < 2000; i++) {
+        var vertex = new THREE.Vector3();
+
+        var theta = THREE.Math.randFloatSpread(360);
+        var phi = THREE.Math.randFloatSpread(360);
+
+        vertex.x = distance2 * Math.sin(theta) * Math.cos(phi);
+        vertex.y = distance2 * Math.sin(theta) * Math.sin(phi);
+        vertex.z = distance2 * Math.cos(theta);
+
+        geometry2.vertices.push(vertex);
+
+        // Assign random colors to the particles
+        var color = new THREE.Color();
+        color.setHSL(200, 0.7, 0.6);
+        geometry2.colors.push(color);
+      }
+
+      var particles2 = new THREE.Points(
+        geometry2,
+        new THREE.PointsMaterial({
+          size: 1,
+          vertexColors: THREE.VertexColors,
+        })
+      );
+
+      particles2.boundingSphere = 50;
+
+      var renderingParent2 = new THREE.Group();
+      renderingParent2.add(particles2);
+
+      var resizeContainer2 = new THREE.Group();
+      resizeContainer2.add(renderingParent2);
+      scene.add(resizeContainer2);
+
+      renderingParent2.position.x = 400; // Adjust the position of the second sphere
+
+      camera.position.z = 500;
+
+      var animate = () => {
+        requestAnimationFrame(animate);
+        renderer.render(scene, camera);
+      };
+
+      var myTween;
+      function onMouseMove(event) {
+        if (myTween) myTween.kill();
+
+        mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+        mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+        myTween = gsap.to(particles1.rotation, {
+          duration: 0.1,
+          x: mouseY * -1,
+          y: mouseX,
+        });
+      }
+      animate();
+
+      var animProps1 = { scale: 1, xRot: 0, yRot: 0 };
+      renderingParent1.scale.set(
+        animProps1.scale,
+        animProps1.scale,
+        animProps1.scale
+      );
+
+      gsap.to(animProps1, {
+        duration: 120,
+        xRot: Math.PI * 2,
+        yRot: Math.PI * 4,
+        repeat: -1,
+        yoyo: false,
+        ease: "none",
+        onUpdate: function () {
+          renderingParent1.rotation.set(animProps1.xRot, animProps1.yRot, 0);
+        },
+      });
+
+      var animProps2 = { scale: 0.3, xRot: 0, yRot: 0 };
+      renderingParent2.scale.set(
+        animProps2.scale,
+        animProps2.scale,
+        animProps2.scale
+      );
+
+      gsap.to(animProps2, {
+        duration: 10,
+        xRot: Math.PI * 3,
+        yRot: Math.PI * 2,
+        repeat: -1,
+        yoyo: false,
+        ease: "none",
+        onUpdate: function () {
+          renderingParent2.rotation.set(animProps2.xRot, animProps2.yRot, 0);
+        },
+      });
+    </script>
+  </body>
+</html>

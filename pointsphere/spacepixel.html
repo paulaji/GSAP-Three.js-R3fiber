@@ -56,7 +56,7 @@
 
         // Assign random colors to the particles
         var color = new THREE.Color();
-        color.setHSL(Math.random(), 1, 1);
+        color.setHSL(0.5, 0.8, 0.6);
         geometry.colors.push(color);
       }
 
@@ -97,6 +97,9 @@
         });
       }
       animate();
+
+      let scale1 = 2;
+      let scale2 = 3;
 
       var animProps = { scale: 2, xRot: 0, yRot: 0 };
       renderingParent.scale.set(
