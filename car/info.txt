@@ -1,2 +1,5 @@
 npx create-react-app . --template minimal // create a minimal template react application, . refers to current directory
 npm install three @react-three/fiber @react-three/drei @react-three/postprocessing // installing threejs react libraries
+
+FOV (field of view): A smaller fov value results in a zoomed-in, more focused view, while a larger fov value provides a wider field of view, creating a more expansive view.
+
