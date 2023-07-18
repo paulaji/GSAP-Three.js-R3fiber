@@ -3,3 +3,4 @@ npm install three @react-three/fiber @react-three/drei @react-three/postprocessi
 
 FOV (field of view): A smaller fov value results in a zoomed-in, more focused view, while a larger fov value provides a wider field of view, creating a more expansive view.
 
+npm run start // to start the application
