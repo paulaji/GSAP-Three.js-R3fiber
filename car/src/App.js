@@ -21,7 +21,7 @@ function CarShow() {
       */}
       {/* for the spotlight, smaller the value of angle, smaller the spotlight size, which means a more focused spotlight, penumbra is when a spotlight/ray of light hits an object and the balance light around the object goes to the back, higher penumbra results in smoother transition from full intensity to lower (refer googleimages), applying a tiny shadowBias will reduce shadow acne, shadow acne is improper shadow movement along with camera movement (say, pixelated shadow movement) */}
       <SpotLight
-        color={[1, 0.25, 0.7]}
+        color={[1, 0.25, 0.7]} // pinkish-purple
         intensity={1.5}
         angle={0.6}
         penumbra={0.5}
@@ -29,6 +29,20 @@ function CarShow() {
         castShadow
         shadowBias={-0.0001}
       />
+      {/* going to create another spotlight which will be cast from another position, like lights front two ends of the stage */}
+      <SpotLight
+        color={[0.14, 0.5, 1]} // blue shade
+        intensity={2}
+        angle={0.6}
+        penumbra={0.5}
+        position={[-5, 5, 0]}
+        castShadow
+        shadowBias={-0.0001}
+      />
+      {/* <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[1, 1, 1]} />
+        <meshBasicMaterial color={"grey"} />
+      </mesh> */}
     </>
   );
 }
