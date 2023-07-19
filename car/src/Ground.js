@@ -1,6 +1,39 @@
 import { MeshReflectorMaterial } from "@react-three/drei";
+import { useEffect } from "react";
+
+// to load external textures, models, images, assets
+import { useLoader } from "@react-three/fiber";
+// we need to impose texture/2d into 3d models, therefore, we use RepeatWrapping
+import { TextureLoader, RepeatWrapping } from "three";
 
 export function Ground() {
+  // load the textures from the public dir
+  // we don't need to seperately import process.env
+  // we create a URL to access the image
+  // in react, we usually place images in a folder inside the public directory so that the static images/files can be served properly and we use the below shown syntax to do so!
+  const [roughness, normal] = useLoader(TextureLoader, [
+    process.env.PUBLIC_URL + "textures/terrain-roughness.jpeg",
+    process.env.PUBLIC_URL + "textures/terrain-normal.jpeg",
+  ]);
+
+  // useEffect is used to perform side effects after the component has been rendered
+  // side effects usually refer to changes brought about by a function outside it's local scope
+  // here, we are performing side effects on normal and roughness
+  // side effect here is repeating the textures over a 3d object (3d object here is the MeshReflectorMaterial)
+  // we are using useEffect here because of many factors and one key factor would be timing
+  // the repeating is happening after the render of the texture is complete (otherwise it would be awkward)
+  useEffect(() => {
+    [normal, roughness].forEach((t) => {
+      // wrapS is for horizontal wrapping
+      // wrapT is for vertical wrapping
+      // both S and T wrappings are usually done for 3d models, but in our case we are wrapping a 'ground' which we created in such a way that it doesn't have a thickness, but because of standard practices, we apply both wrapping
+      t.wrapS = RepeatWrapping;
+      t.wrapT = RepeatWrapping;
+      // to set how many times the texture is repeated horizontally and vertically respectively
+      t.repeat.set(5, 5);
+    });
+  }, [normal, roughness]);
+
   return (
     // to rotate the plane -90degrees so that it will appear like a ground lying flat on the x-z plane, the normal oreintation was to lie on the x-y plane, but that will make the ground appear to be standing upright (weird :0)
     <mesh rotation-x={-Math.PI * 0.5} castShadow receiveShadow>
