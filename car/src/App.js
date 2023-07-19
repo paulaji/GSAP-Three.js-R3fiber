@@ -2,7 +2,7 @@
 import React, { Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import "./style.css";
-import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera, SpotLight } from "@react-three/drei";
 
 function CarShow() {
   return (
@@ -11,11 +11,24 @@ function CarShow() {
       <OrbitControls target={[0, 0.35, 0]} maxPolarAngle={1.45} />
       <PerspectiveCamera makeDefault fov={50} position={[3, 2, 5]} />
 
-      {/* mesh object is basically used to create a 3d cube in the scene, boxGeometry is the dimensions of the cube */}
-      <mesh>
-        <boxGeometry args={[1, 1, 1]} />
-        <meshBasicMaterial color={"red"} />
-      </mesh>
+      {/* let color = new Color(0, 0, 0); */}
+      {/* here, we define inside arg, what color we want and attach='background' says it should be the background color */}
+      <color arg={[0, 0, 0]} attach="background" />
+
+      {/* let spotlight = new SpotLight();
+          spotlight.intensity = 1.5;
+          spotlight.position.set(...)
+      */}
+      {/* for the spotlight, smaller the value of angle, smaller the spotlight size, which means a more focused spotlight, penumbra is when a spotlight/ray of light hits an object and the balance light around the object goes to the back, higher penumbra results in smoother transition from full intensity to lower (refer googleimages), applying a tiny shadowBias will reduce shadow acne, shadow acne is improper shadow movement along with camera movement (say, pixelated shadow movement) */}
+      <SpotLight
+        color={[1, 0.25, 0.7]}
+        intensity={1.5}
+        angle={0.6}
+        penumbra={0.5}
+        position={[5, 5, 0]}
+        castShadow
+        shadowBias={-0.0001}
+      />
     </>
   );
 }

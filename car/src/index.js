@@ -7,4 +7,5 @@ import { createRoot } from "react-dom/client";
 // createRoot() helps in the same
 // it takes a DOM element as arguement, here document.getElementById("root") and this represents the new entry point of the app
 const root = createRoot(document.getElementById("root"));
+// now the export default App from App.js will be our entry point
 root.render(<App />);
